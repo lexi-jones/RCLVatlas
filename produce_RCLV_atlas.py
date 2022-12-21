@@ -17,7 +17,7 @@
 # This script is set up so that each step can be run one at a time, if desired.
 
 # Lexi Jones
-# Last Edited: 12/20/22
+# Last Edited: 12/21/22
 
 import os,sys
 import numpy as np
@@ -35,11 +35,8 @@ date_list = np.sort(np.unique(dates)).tolist()[::-1] #Reverse the order because 
 
 # Edit this if you want to create an atlas for a subset of years, or run the set_up_RCLV_atlas() in parallel on a subset of years.
 # I typically run one year at a time for set_up_RCLV_atlas() because this step takes several hours to run 
-start_year,end_year = 2010,2011 
-date_list = [i for i in date_list if ((int(i[0:4]) >= start_year) and (int(i[0:4]) <= end_year))]
-
-# Notes about weird RCLVs are written to the log file 
-#log_file = open('%sRCLV_%s_%s_log_file.txt'%(RCLV_dir,date_list[-1],date_list[0]),'a')
+#start_year,end_year = 2010,2011 
+#date_list = [i for i in date_list if ((int(i[0:4]) >= start_year) and (int(i[0:4]) <= end_year))]
 
 ####################################### 1. Identify RCLVS #######################################
 RCLV_data = set_up_RCLV_atlas(date_list) 
@@ -61,6 +58,7 @@ save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_untracked.csv'%(RCLV_dir,date_list[-1],dat
 #save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_tracked_with_ID.csv'%(RCLV_dir,date_list[-1],date_list[0])) # Save the tracked data as a CSV
 
 ####################################### 3. QC: Check if any RCLVs skipped a date (or 2) #######################################
+#log_file = open('%sRCLV_%s_%s_log_file.txt'%(RCLV_dir,date_list[-1],date_list[0]),'a') # Notes about weird RCLVs are written to the log file
 #RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_tracked_with_ID.csv'%(RCLV_dir,date_list[-1],date_list[0]))   
 #RCLV_data = interpolate_skipped_contours(RCLV_data,log_file,date_list)
 #save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_skips_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0]))
