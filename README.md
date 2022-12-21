@@ -11,17 +11,21 @@ Last edited: 12/20/22
 
 ## About
 
+This code builds off of the core packages (OceanParcels & floater) to create an atlas of Rotationally Coherent Lagrangain Vortices (RCLVs) from the Lagrangian Averaged Vorticity Deviation (LAVD - Haller et al 2016 - doi:10.1017/jfm.2016.151). The pipeline includes functions to initialize particles in a grid formation, and advect them through satellite geostrophic velocity fields from CMEMS. Moreover, we built a custom kernel to calculate the vorticity along a Lagrangian particle trajectory, which is necessary for calculating the LAVD.
 
-## Key Packages
+The LAVD is calculated by integrating the vorticity along a particles trajectory, and subtracting the domain average vorticity. Each particle will then have a single LAVD value assigned to it. By plotting the LAVD at the particle initialization location, RCLVs are easily identifiable as circular local maxima in the LAVD field. The floater package is used to identify closed contours around these local maxima in order to define the boundary of a coherent structure. 
 
-1. OceanParcels (Delandmeter and van Sebille 2019 - https://doi.org/10.5194/gmd-12-3571-2019)
+We build on the floater package by iterating through viable convex deficiency parameters, requiring minimal dispersal, and ensuring that the sign of the vorticity is consistent and the beginning and end of the features lifetime. Finally, this code can be used to track RCLVs through time and space by assigning water masses a unique ID. The tracking methodology allows one to create an RCLV atlas that can be easily compared with Eulerian eddy atlases. 
+
+## Core Packages
+
+1. OceanParcels v2.2 (Delandmeter and van Sebille 2019 - https://doi.org/10.5194/gmd-12-3571-2019)
 	- Package documentation: https://oceanparcels.org/index.html
 	- Used to run Lagrangian trajectories
 
 2. floater (Tarshish et al. 2018 - https://doi.org/10.1016/j.ocemod.2018.07.001)
 	- Package documentation: https://floater.readthedocs.io/en/latest/
 	- Used to identify RCLVs from the LAVD field
-
 
 ## Installation
 
