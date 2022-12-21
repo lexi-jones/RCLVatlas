@@ -10,8 +10,10 @@ import xarray as xr
 from glob import glob
 from datetime import datetime
 from parcels import FieldSet,Variable,JITParticle
-from ./RCLVatlas/functions_for_parcels import *
 from config import *
+
+sys.path.append('./RCLVatlas/')
+from functions_for_parcels import *
 
 date_input = sys.argv[1] # user input: particle intialization date
 

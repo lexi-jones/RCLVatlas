@@ -12,9 +12,9 @@
 # 6. Give RCLVs an age
 
 # Lexi Jones
-# Last Edited: 12/19/22
+# Last Edited: 12/21/22
 
-import os,itertools
+import os,itertools,sys
 import xarray as xr
 import numpy as np
 from floater import rclv
@@ -22,7 +22,9 @@ from skimage.feature import peak_local_max
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon 
 from subfunctions_for_RCLV_atlas import *
-from ../config import *
+
+sys.path.append('../RCLVatlas/')
+from config import *
 
 ####################################### 1. Identify RCLVS #######################################
 
