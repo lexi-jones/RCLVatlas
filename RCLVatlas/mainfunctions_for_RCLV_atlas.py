@@ -23,7 +23,7 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon 
 from subfunctions_for_RCLV_atlas import *
 
-sys.path.append('../RCLVatlas/')
+sys.path.append('../')
 from config import *
 
 ####################################### 1. Identify RCLVS #######################################

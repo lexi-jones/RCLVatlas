@@ -23,7 +23,7 @@ import os
 import numpy as np
 from config import *
 
-sys.path.append('../RCLVatlas/')
+sys.path.append('./RCLVatlas/')
 from subfunctions_for_RCLV_atlas import read_RCLV_CSV_untracked,read_RCLV_CSV_tracked,save_RCLV_CSV
 from mainfunctions_for_RCLV_atlas import *
 
