@@ -17,13 +17,14 @@
 # This script is set up so that each step can be run one at a time, if desired.
 
 # Lexi Jones
-# Last Edited: 12/19/22
+# Last Edited: 12/20/22
 
 import os
 import numpy as np
-from ./RCLVatlas/subfunctions_for_RCLV_atlas import read_RCLV_CSV_untracked,read_RCLV_CSV_tracked,save_RCLV_CSV
-from ./RCLVatlas/mainfunctions_for_RCLV_atlas import *
 from config import *
+sys.path.append('../RCLVatlas/')
+from subfunctions_for_RCLV_atlas import read_RCLV_CSV_untracked,read_RCLV_CSV_tracked,save_RCLV_CSV
+from mainfunctions_for_RCLV_atlas import *
 
 # Retrieve initialization dates from LAVD directory
 dates = []
@@ -33,11 +34,11 @@ date_list = np.sort(np.unique(dates)).tolist()[::-1] #Reverse the order because 
 
 # Edit this if you want to create an atlas for a subset of years, or run the set_up_RCLV_atlas() in parallel on a subset of years.
 # I typically run one year at a time for set_up_RCLV_atlas() because this step takes several hours to run 
-start_year,end_year = 2010,2019 
+start_year,end_year = 2010,2011 
 date_list = [i for i in date_list if ((int(i[0:4]) >= start_year) and (int(i[0:4]) <= end_year))]
 
 # Notes about weird RCLVs are written to the log file 
-log_file = open('%sRCLV_%s_%s_log_file.txt'%(RCLV_dir,date_list[-1],date_list[0]),'a')
+#log_file = open('%sRCLV_%s_%s_log_file.txt'%(RCLV_dir,date_list[-1],date_list[0]),'a')
 
 ####################################### 1. Identify RCLVS #######################################
 RCLV_data = set_up_RCLV_atlas(date_list) 
@@ -54,29 +55,29 @@ save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_untracked.csv'%(RCLV_dir,date_list[-1],dat
 #file5 = read_RCLV_CSV_untracked('%sRCLV_2018_2019_untracked.csv'%(output_dir),0)
 #RCLV_data = np.array(np.concatenate((file1,file2,file3,file4,file5)))
     
-RCLV_data = np.array(read_RCLV_CSV_untracked('%sRCLV_%s_%s_untracked.csv'%(RCLV_dir,date_list[-1],date_list[0]),1),dtype=object)
-RCLV_data = track_and_ID_RCLVs(RCLV_data,date_list)
-save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_tracked_with_ID.csv'%(RCLV_dir,date_list[-1],date_list[0])) # Save the tracked data as a CSV
+#RCLV_data = np.array(read_RCLV_CSV_untracked('%sRCLV_%s_%s_untracked.csv'%(RCLV_dir,date_list[-1],date_list[0]),1),dtype=object)
+#RCLV_data = track_and_ID_RCLVs(RCLV_data,date_list)
+#save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_tracked_with_ID.csv'%(RCLV_dir,date_list[-1],date_list[0])) # Save the tracked data as a CSV
 
 ####################################### 3. QC: Check if any RCLVs skipped a date (or 2) #######################################
-RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_tracked_with_ID.csv'%(RCLV_dir,date_list[-1],date_list[0]))   
-RCLV_data = interpolate_skipped_contours(RCLV_data,log_file,date_list)
-save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_skips_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0]))
+#RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_tracked_with_ID.csv'%(RCLV_dir,date_list[-1],date_list[0]))   
+#RCLV_data = interpolate_skipped_contours(RCLV_data,log_file,date_list)
+#save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_skips_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0]))
 
 ####################################### 4. Interpolate eddy bounds for first 3 timesteps #######################################
-RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_skips_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0])
-RCLV_data = interpolate_first_3timesteps(RCLV_data,log_file,date_list)
-save_RCLV_CSV(,'%sRCLV_%s_%s_first_3timesteps_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0])) 
+#RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_skips_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0])
+#RCLV_data = interpolate_first_3timesteps(RCLV_data,log_file,date_list)
+#save_RCLV_CSV(,'%sRCLV_%s_%s_first_3timesteps_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0])) 
 
 ####################################### 5. QC: Address instances of overlapping contours #######################################
-RCLV_data = np.array(read_RCLV_CSV_tracked('%sRCLV_%s_%s_first_3timesteps_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0])),dtype=object)
-RCLV_data = overlapping_RCLV_QC(RCLV_data,log_file,date_list)
-save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_overlap_QC.csv'%(RCLV_dir,date_list[-1],date_list[0]))
+#RCLV_data = np.array(read_RCLV_CSV_tracked('%sRCLV_%s_%s_first_3timesteps_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0])),dtype=object)
+#RCLV_data = overlapping_RCLV_QC(RCLV_data,log_file,date_list)
+#save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_overlap_QC.csv'%(RCLV_dir,date_list[-1],date_list[0]))
 
 ####################################### 6. Give RCLVs an age #######################################
-RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_overlap_QC.csv'%(RCLV_dir,date_list[-1],date_list[0]))
-RCLV_data = age_RCLVs(RCLV_data)
-save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_atlas.csv'%(RCLV_dir,date_list[-1],date_list[0])) # Save the final dataset
+#RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_overlap_QC.csv'%(RCLV_dir,date_list[-1],date_list[0]))
+#RCLV_data = age_RCLVs(RCLV_data)
+#save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_atlas.csv'%(RCLV_dir,date_list[-1],date_list[0])) # Save the final dataset
 
 #####################################################################################################################                                  
-log_file.close()
+#log_file.close()
