@@ -19,7 +19,7 @@
 # Lexi Jones
 # Last Edited: 12/20/22
 
-import os
+import os,sys
 import numpy as np
 from config import *
 
