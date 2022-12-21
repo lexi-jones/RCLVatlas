@@ -50,8 +50,11 @@ Last edited: 12/20/22
 
 3. Define local directory paths and adjust parameters with the `config.py` file
 
-4. Run Lagrangian particle simulation & calculate LAVD with command `python run_parcels_CMEMS.py YYYYMMDD`
+4. Run Lagrangian particle simulation with command `python run_parcels_CMEMS.py YYYYMMDD`
     - The geostrophic velocity data must be downloaded for each day needed for the timeframe of your particle simulation
     
-5. Practice using the RCLV tracking tools with the Jupyter notebook `example_usage.ipynb`; `produce_RCLV_atlas.py` can be used
-   for producing larger datasets 
+5. Practice using the RCLV tracking tools with the Jupyter notebook `example_usage.ipynb`
+
+
+
+
