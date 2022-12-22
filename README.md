@@ -4,10 +4,6 @@ Lexi Jones (MIT)
 
 Email: jonesae@mit.edu
 
-Date created: 12/08/22
-
-Last edited: 12/20/22
-
 
 ## About
 
@@ -48,11 +44,14 @@ We build on the floater package by iterating through viable convex deficiency pa
 1. Activate the conda environment
     `source activate myenvname`
 
-2. Download CMEMS daily geostrophic velocity data
+2. Download CMEMS daily geostrophic velocity data (ftp recommended)
     - https://data.marine.copernicus.eu/product/SEALEVEL_GLO_PHY_L4_MY_008_047/description
     - Code is setup to run on geostrophic velocity data with each day stored in a seperate file of format: 'dt_global_allsat_phy_l4_YYYYMMDD.nc'
 
 3. Define local directory paths and adjust parameters with the `config.py` file
+
+4. Reformat the CMEMS longitude array and file name with `reformat_CMEMS_longitude.py`
+    - Longitude coordinates need to be 0 -> 360 (default is -180 to 180 when downloaded from CMEMS)
 
 4. Run Lagrangian particle simulation & calculate LAVD with command `python run_parcels_CMEMS.py YYYYMMDD`
     - The geostrophic velocity data must be downloaded for each day needed for the timeframe of your particle simulation
