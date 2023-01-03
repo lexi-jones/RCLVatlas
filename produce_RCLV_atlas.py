@@ -64,7 +64,7 @@ save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_untracked.csv'%(RCLV_dir,date_list[-1],dat
 #save_RCLV_CSV(RCLV_data,'%sRCLV_%s_%s_skips_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0]))
 
 ####################################### 4. Interpolate eddy bounds for first 3 timesteps #######################################
-#RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_skips_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0])
+#RCLV_data = read_RCLV_CSV_tracked('%sRCLV_%s_%s_skips_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0]))
 #RCLV_data = interpolate_first_3timesteps(RCLV_data,log_file,date_list)
 #save_RCLV_CSV(,'%sRCLV_%s_%s_first_3timesteps_interpolated.csv'%(RCLV_dir,date_list[-1],date_list[0])) 
 
