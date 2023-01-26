@@ -481,7 +481,11 @@ def overlapping_RCLV_QC(RCLV_data,log_file,date_list):
                 # Intersection is one polygon
                 intersection = contour_pts1.intersection(contour_pts2) # get the shape of the intersection
                 if intersection.type == 'Polygon':
-                    xx, yy = intersection.exterior.coords.xy
+                    try:
+                        xx, yy = intersection.exterior.coords.xy
+                    except:
+                        print(intersection.type)
+                        print(intersection)
                     lon_bounds,lat_bounds = xx.tolist(),yy.tolist()
                     try:
                         area_intersect = calc_area_of_stitched_bounds(lon_bounds,lat_bounds,traj_lon_array,traj_lat_array)
@@ -511,7 +515,17 @@ def overlapping_RCLV_QC(RCLV_data,log_file,date_list):
                         elif ind==b:
                             primary_contour,secondary_contour = contour_pts2,contour_pts1
 
-                        new_poly_x,new_poly_y = primary_contour.difference(secondary_contour).exterior.coords.xy
+                            
+                        intersection = primary_contour.difference(secondary_contour)
+                        if intersection.type != 'GeometryCollection': 
+                            new_poly_x,new_poly_y = intersection.exterior.coords.xy
+                        else: # rare case
+                            for poly in list(intersection.geoms):
+                                if poly.type == 'LineString':
+                                    pass
+                                else:
+                                    new_poly_x,new_poly_y = poly.exterior.coords.xy
+                                
                         reformat_bounds = []
                         for l in np.arange(0,len(new_poly_x)):
                             reformat_bounds.append(new_poly_x[l])
