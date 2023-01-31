@@ -441,17 +441,55 @@ def interpolate_first_3timesteps(RCLV_data,log_file,date_list):
 
 def overlapping_RCLV_QC(RCLV_data,log_file,date_list):
     """
+    First step is to clean up RCLV contours by removing small external polygons and lines from the shape.
+    
     In some rare cases there will be overlapping contours of RCLVs from one of the interpolated boundaries steps. Some example 
     phenomena of what could cause this include eddy splitting, eddy merging, an "escaping" center particle, etc. 
     """
     print('Find instances of overlapping RCLV contours...')
 
-    count3,count4,count5 = 0,0,0
+    count3,count4,count5,count6 = 0,0,0,0
     contain_IDs = {}
     for d in date_list:
         print(d)
+        RCLV_inds = np.where(np.array([row[0] for row in RCLV_data]) == d)[0]# get all of the data for the RCLVs on the current date (d)
+        
+        ############ Keep the largest polygon for 'Multipolygon' or 'GeometryCollection' contours ############
+        for ind in RCLV_inds:
+            ID = RCLV_data[ind][1]
+            bnds = RCLV_data[ind][9:]
+            contour_pts = Polygon([(float(bnds[0::2][i]),float(bnds[1::2][i])) for i in np.arange(0,len(bnds[0::2]))])
             
-        RCLV_inds = np.where(np.array([row[0] for row in RCLV_data]) == d)[0]# get all of the data for the RCLVs on the current date (d)     
+            # Check intersection with itself to break the shape down to its polygons/lines
+            intersection = contour_pts.intersection(contour_pts) 
+            if intersection.type != 'Polygon':
+                count3 += 1
+                log_file.write('RCLV %s on %s is a MultiPolygon or GeometryCollection that was reduced to the largest polygon\n'%(ID,d))
+            
+                polygons,polygon_areas = [],[] # collect just the polygons, exclude lines
+                for geom in intersection:
+                    if geom.type == 'Polygon':
+                        xx, yy = geom.exterior.coords.xy
+                        lon_bounds,lat_bounds = xx.tolist(),yy.tolist()
+                        polygons.append(geom)
+                        polygon_areas.append(calc_area_of_stitched_bounds(lon_bounds,lat_bounds,traj_lon_array,traj_lat_array))
+                        
+                # Keep only the polygon with the maximum area
+                max_area = max(polygon_areas)
+                max_index = polygon_areas.index(max_area)
+                new_contour = polygons[max_index]
+                new_poly_x, new_poly_y = new_contour.exterior.coords.xy
+
+                # Redefine RCLV boundaries in the main data
+                reformat_bounds = []
+                for l in np.arange(0,len(new_poly_x)):
+                    reformat_bounds.append(new_poly_x[l])
+                    reformat_bounds.append(new_poly_y[l])
+
+                RCLV_data[ind][9:] = reformat_bounds
+                RCLV_data[ind][8] = str(int(RCLV_data[ind][8])) + str(3) #<- 3 flag will mean the RCLV was a MultiPolygon & part was removed
+                
+        ############ Check for overlaps ############
         for a, b in itertools.combinations(RCLV_inds, 2): #tries all combinations from the list
             ID1,ID2 = RCLV_data[a][1],RCLV_data[b][1]
             bnds1,bnds2 = RCLV_data[a][9:],RCLV_data[b][9:]
@@ -460,7 +498,7 @@ def overlapping_RCLV_QC(RCLV_data,log_file,date_list):
 
             ############ First check if one contour fully contains the other ##############
             if contour_pts1.contains(contour_pts2):
-                count5 += 1
+                count6 += 1
                 log_file.write('RCLV %s contains %s on %s\n'%(ID1,ID2,d))
                 key_string = '%s,%s'%(ID1,ID2)
                 if key_string not in contain_IDs: #Dictionary key order matters here: first ID contains the second
@@ -468,7 +506,7 @@ def overlapping_RCLV_QC(RCLV_data,log_file,date_list):
                 else:
                     contain_IDs[key_string].append(d)
             elif contour_pts2.contains(contour_pts1): 
-                count5 += 1
+                count6 += 1
                 log_file.write('RCLV %s contains %s on %s\n'%(ID2,ID1,d))
                 key_string = '%s,%s'%(ID2,ID1)
                 if key_string not in contain_IDs:
@@ -481,12 +519,9 @@ def overlapping_RCLV_QC(RCLV_data,log_file,date_list):
                 # Intersection is one polygon
                 intersection = contour_pts1.intersection(contour_pts2) # get the shape of the intersection
                 if intersection.type == 'Polygon':
-                    try:
-                        xx, yy = intersection.exterior.coords.xy
-                    except:
-                        print(intersection.type)
-                        print(intersection)
+                    xx, yy = intersection.exterior.coords.xy
                     lon_bounds,lat_bounds = xx.tolist(),yy.tolist()
+                    
                     try:
                         area_intersect = calc_area_of_stitched_bounds(lon_bounds,lat_bounds,traj_lon_array,traj_lat_array)
                     except: #area too small to compute 
@@ -504,7 +539,7 @@ def overlapping_RCLV_QC(RCLV_data,log_file,date_list):
 
                 # If the intersection is small (<5% of the area of both polygons), then remove the intersecting polygon from both RCLVs 
                 if (area_intersect/RCLV_data[a][4] <= 0.05) and (area_intersect/RCLV_data[b][4] <= 0.05):
-                    count3 += 1
+                    count4 += 1
                     log_file.write('Removing intersection (<=5 percent of area) between RCLV %s and %s on %s \n'%(ID1,ID2,d))
                     temp_data_dict = {a:[contour_pts1],b:[contour_pts2]}
                     for ind in (a,b):
@@ -517,45 +552,43 @@ def overlapping_RCLV_QC(RCLV_data,log_file,date_list):
 
                             
                         intersection = primary_contour.difference(secondary_contour)
-                        if intersection.type != 'GeometryCollection': 
-                            new_poly_x,new_poly_y = intersection.exterior.coords.xy
-                        else: # rare case
-                            for poly in list(intersection.geoms):
-                                if poly.type == 'LineString':
-                                    pass
-                                else:
-                                    new_poly_x,new_poly_y = poly.exterior.coords.xy
-                                
+                        new_poly_x,new_poly_y = intersection.exterior.coords.xy
+                        
                         reformat_bounds = []
                         for l in np.arange(0,len(new_poly_x)):
                             reformat_bounds.append(new_poly_x[l])
                             reformat_bounds.append(new_poly_y[l])
                         RCLV_data[ind][9:] = reformat_bounds
-                        RCLV_data[ind][8] = str(int(RCLV_data[ind][8])) + str(3) #<- 3 flag will mean adjusted boundaries
+                        RCLV_data[ind][8] = str(int(RCLV_data[ind][8])) + str(4) #<- 4 flag will mean adjusted boundaries from 5% overlap
 
                 # If the intersection is large, flag it and do nothing 
                 else:
-                    count4 += 1
+                    count5 += 1
                     log_file.write('Intersection (>5 percent of area) between RCLV %s and %s on %s \n'%(ID1,ID2,d))
                     for ind in (a,b):
-                        RCLV_data[ind][8] = str(int(RCLV_data[ind][8])) + str(4) #<- 4 flag will mean there is an RCLV overlap / split
+                        RCLV_data[ind][8] = str(int(RCLV_data[ind][8])) + str(5) #<- 5 flag will mean there is an RCLV overlap / split
                         
-    #### Combine RCLVs that are fully contained in another into one RCLV ID 
+    #### Combine RCLVs that are fully contained in another into one RCLV ID by removing the contained contour ####
     remove_contour_inds = []
     for key,values in contain_IDs.items():
         ID_to_keep,ID_to_remove = key.split(',')
         ID_to_remove_inds = np.where([row[1] == int(ID_to_remove) for row in RCLV_data])[0]
+
+        # Iterate through overlapping instances
         for ind in ID_to_remove_inds:
-            if RCLV_data[ind][0] in values: #check if this is an overlap date
-                remove_contour_inds.append(ind) # remove this data point later to not mess up the indexing
+            current_date = RCLV_data[ind][0]
+            if current_date in values: #check if this is an overlap date
+                remove_contour_inds.append(ind) # remove this data point (do it later to not mess up the indexing)
             else: # change ID & flag 
                 RCLV_data[ind][1] = ID_to_keep # change the ID 
-                RCLV_data[ind][8] = str(int(RCLV_data[ind][8])) + str(5) #<- 5 flag will mean there was an ID change
-                
+                RCLV_data[ind][8] = str(int(RCLV_data[ind][8])) + str(6) #<- 6 flag will mean there was an overlap/ID change
+                                 
     RCLV_data = np.delete(RCLV_data,remove_contour_inds)
-    log_file.write('%s small intersections removed\n'%(count3))
-    log_file.write('%s large intersections flagged\n'%(count4))
-    log_file.write('%s overlapping RCLV intances collapsed\n'%(count5))
+    
+    ### Write summary data to log file ### 
+    log_file.write('%s small intersections removed\n'%(count4))
+    log_file.write('%s large intersections flagged\n'%(count5))
+    log_file.write('%s overlapping RCLV instances collapsed\n'%(count6))
     return RCLV_data
     
             
@@ -574,7 +607,12 @@ def age_RCLVs(RCLV_data):
         eddy_dates_sorted, eddy_inds_sorted = (list(t) for t in zip(*sorted(zip(eddy_dates, eddy_inds))))
         
         eddy_flags = np.array([int(RCLV_data[e][8]) for e in eddy_inds_sorted])
-        ref_ind = np.where((eddy_flags==0)|(eddy_flags==3)|(eddy_flags==4)|(eddy_flags==5))[0][0] #first identified RCLV (32 days old)
+        
+        #Find the first identified RCLV (32 days old); flag will not include '2' (in most cases)
+        
+        ref_ind = np.where((['2' not in str(f) for f in eddy_flags]))[0][0]
+        if ref_ind > 3: #Rare case: Need to override where there was an overlap at the eddy genesis        
+            ref_ind = np.where((['6' not in str(f) for f in eddy_flags]))[0][0]
         ref_date = str(eddy_dates_sorted[ref_ind])
         
         # Iterate through each instance of this eddy ID
@@ -584,5 +622,11 @@ def age_RCLVs(RCLV_data):
             elif j < ref_ind: #subtract dates that come before reference
                 RCLV_data[eddy_inds_sorted[j]][3] = sim_params['runtime'] - num_days_between(ref_date,str(eddy_dates_sorted[j])) 
             else: #add dates that come after reference
-                RCLV_data[eddy_inds_sorted[j]][3] = sim_params['runtime'] + num_days_between(ref_date,str(eddy_dates_sorted[j])) 
+                RCLV_data[eddy_inds_sorted[j]][3] = sim_params['runtime'] + num_days_between(ref_date,str(eddy_dates_sorted[j]))
+
+    # Clean up flags so all are integer strings
+    for r in RCLV_data:
+        if ('.' in str(r[8])):
+            r[8] = int(float(r[8]))
+    
     return RCLV_data
