@@ -4,31 +4,16 @@
 import numpy as np
 
 ### Directory paths ### 
-gos_vel_dir = '/nfs/micklab005/jonesae/NP_2000_to_2020/CMEMS_data/' # Geostrophic velocity directory
-lag_traj_dir = '/nfs/micklab005/jonesae/NP_2000_to_2020/parcels_8day_overlap_32day_trajs/' # Lagrangian trajectory directory
-LAVD_dir = '/nfs/micklab005/jonesae/NP_2000_to_2020/parcels_8day_overlap_32day_LAVD/' # LAVD directory
-RCLV_dir = '/nfs/micklab005/jonesae/NP_2000_to_2020/parcels_8day_overlap_32day_RCLVatlas/' #RCLVatlas directory
+gos_vel_dir = './CMEMS_data/' # Geostrophic velocity directory
+lag_traj_dir = './lag_trajs/' # Lagrangian trajectory directory
+LAVD_dir = './LAVD/' # LAVD directory 
+RCLV_dir = './RCLVs/' #RCLVatlas directory
 
-#lag_traj_dir = '/nfs/micklab005/jonesae/NP_2000_to_2020/RCLVatlas_test/lag_trajs/' # Lagrangian trajectory directory
-#LAVD_dir = '/nfs/micklab005/jonesae/NP_2000_to_2020/RCLVatlas_test/LAVD/' # LAVD directory
-#RCLV_dir = '/nfs/micklab005/jonesae/NP_2000_to_2020/RCLVatlas_test/RCLVs/' #RCLVatlas directory
-
-#gos_vel_dir = './CMEMS_data/' # Geostrophic velocity directory
-#lag_traj_dir = './lag_trajs/' # Lagrangian trajectory directory
-#LAVD_dir = './LAVD/' # LAVD directory 
-#RCLV_dir = './RCLVs/' #RCLVatlas directory
-
-grid_bounds = {'lon_bound_west':180.0,
-               'lon_bound_east':230.0,
-               'lat_bound_south':15.0,
-               'lat_bound_north':30.0,
+grid_bounds = {'lon_bound_west':199.0,
+               'lon_bound_east':204.0,
+               'lat_bound_south':17.0,
+               'lat_bound_north':22.0,
                'lag_grid_res':0.03125}
-
-#grid_bounds = {'lon_bound_west':199.0,
-#               'lon_bound_east':204.0,
-#               'lat_bound_south':17.0,
-#               'lat_bound_north':22.0,
-#               'lag_grid_res':0.03125}
 
 sim_params = {'runtime':32, 
               'runtime_unit':'days',
