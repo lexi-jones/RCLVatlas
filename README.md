@@ -1,6 +1,6 @@
 # RCLVatlas
 
-Lexi Jones (MIT)
+Lexi Jones-Kellett (MIT)
 
 Email: jonesae@mit.edu
 
