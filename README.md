@@ -58,3 +58,12 @@ We build on the floater package by iterating through viable convex deficiency pa
     
 5. Practice using the RCLV tracking tools with the Jupyter notebook `example_usage.ipynb`; `produce_RCLV_atlas.py` can be used
    for producing larger datasets 
+
+## Citation
+
+If you use this software, please cite the following:
+
+Jones-Kellett, A. (2023). RCLVatlas (Version 1.0.0) [Computer software]. https://doi.org/10.5281/zenodo.7702978
+Jones-Kellett, AE & Follows, MJ. (2024). A Lagrangian coherent eddy atlas for biogeochemical applications in the North Pacific Subtropical Gyre. Earth Syst. Sci. Data. 16, 1475–1501. https://doi.org/10.5194/essd-16-1475-2024
+
+
