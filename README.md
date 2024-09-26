@@ -7,7 +7,10 @@ Email: jonesae@mit.edu
 
 ## About
 
-This code builds off of the core packages (OceanParcels & floater) to create an atlas of Rotationally Coherent Lagrangain Vortices (RCLVs) from the Lagrangian Averaged Vorticity Deviation (LAVD - Haller et al 2016 - doi:10.1017/jfm.2016.151). The pipeline includes functions to initialize particles in a grid formation, and advect them through satellite geostrophic velocity fields from CMEMS. Moreover, we built a custom kernel to calculate the vorticity along a Lagrangian particle trajectory, which is necessary for calculating the LAVD.
+This is the supplemental code for ESSD Manucript Jones-Kellett & Follows 2024 (https://doi.org/10.5194/essd-16-1475-2024).
+
+
+These Python scripts build off of the core packages (OceanParcels & floater) to create an atlas of Rotationally Coherent Lagrangain Vortices (RCLVs) from the Lagrangian Averaged Vorticity Deviation (LAVD - Haller et al 2016 - doi:10.1017/jfm.2016.151). The pipeline includes functions to initialize particles in a grid formation, and advect them through satellite geostrophic velocity fields from CMEMS. Moreover, we built a custom kernel to calculate the vorticity along a Lagrangian particle trajectory, which is necessary for calculating the LAVD.
 
 The LAVD is calculated by integrating the vorticity along a particles trajectory, and subtracting the domain average vorticity. Each particle will then have a single LAVD value assigned to it. By plotting the LAVD at the particle initialization location, RCLVs are easily identifiable as circular local maxima in the LAVD field. The floater package is used to identify closed contours around these local maxima in order to define the boundary of a coherent structure. 
 
@@ -18,6 +21,7 @@ We build on the floater package by iterating through viable convex deficiency pa
 1. OceanParcels v2.2 (Delandmeter and van Sebille 2019 - https://doi.org/10.5194/gmd-12-3571-2019)
 	- Package documentation: https://oceanparcels.org/index.html
 	- Used to run Lagrangian trajectories
+	- Note that Version 3 of Parcels outputs zarr files instead of netCDF files
 
 2. floater (Tarshish et al. 2018 - https://doi.org/10.1016/j.ocemod.2018.07.001)
 	- Package documentation: https://floater.readthedocs.io/en/latest/
@@ -25,18 +29,27 @@ We build on the floater package by iterating through viable convex deficiency pa
 
 ## Installation
 
+OPTION 1:
+1. Set up package with YML file:
+	-`
+
 1. Install conda following the instructions here: https://conda.io/projects/conda/en/latest/user-guide/install/index.html
 	- Select Python 3
 
-2. From the terminal (Linux/macOS) or Anaconda prompt (Windows), create a new environment with the dependencies needed to use this package:
+2a. Set up environment with the YML file (preferred method with correct versioning):
+	- `conda env create -f py3_parcels_v2.yml`
+
+~~OR~~
+2b. From the terminal (Linux/macOS) or Anaconda prompt (Windows), create a new environment with the dependencies needed to use this package:
 	- `conda create -n myenvname python`
 	- `conda install -c conda-forge parcels jupyterlab numpy xarray scipy matplotlib shapely`
 	- `conda install scikit-image`
+   NOTE: Need parcels v2.2 to output netCDF files
 
 3. Clone the floater repository
 	- `git clone https://github.com/ocean-transport/floater.git`
 
-3. Clone the repository
+4. Clone the repository
 	- `git clone https://github.com/lexi-jones/RCLVatlas.git`
 
 ## Usage
