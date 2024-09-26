@@ -35,13 +35,13 @@ We build on the floater package by iterating through viable convex deficiency pa
 2. Set up environment with the YML file (preferred method with correct versioning):
 	- `conda env create -f py3_parcels_v2.yml`
 
-~~~OR~~~
+---OR---
 2. From the terminal (Linux/macOS) or Anaconda prompt (Windows), create a new environment with the dependencies needed to use this package:
 	- `conda create -n myenvname python`
 	- `conda install -c conda-forge parcels jupyterlab numpy xarray scipy matplotlib shapely`
 	- `conda install scikit-image`
    NOTE: Need parcels v2.2 to output netCDF files
-~~~~~~~~
+--------
 
 3. Clone the floater repository
 	- `git clone https://github.com/ocean-transport/floater.git`
