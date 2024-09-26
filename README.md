@@ -1,6 +1,6 @@
 # RCLVatlas
 
-Lexi Jones (MIT)
+Lexi Jones-Kellett (MIT)
 
 Email: jonesae@mit.edu
 
@@ -10,11 +10,11 @@ Email: jonesae@mit.edu
 This is the supplemental code for ESSD Manucript Jones-Kellett & Follows 2024 (https://doi.org/10.5194/essd-16-1475-2024).
 
 
-These Python scripts build off of the core packages (OceanParcels & floater) to create an atlas of Rotationally Coherent Lagrangain Vortices (RCLVs) from the Lagrangian Averaged Vorticity Deviation (LAVD - Haller et al 2016 - doi:10.1017/jfm.2016.151). The pipeline includes functions to initialize particles in a grid formation, and advect them through satellite geostrophic velocity fields from CMEMS. Moreover, we built a custom kernel to calculate the vorticity along a Lagrangian particle trajectory, which is necessary for calculating the LAVD.
+This code builds off of the core packages described below (OceanParcels & floater) to create an atlas of Rotationally Coherent Lagrangian Vortices (RCLVs) from the Lagrangian Averaged Vorticity Deviation (LAVD; Haller et al 2016 - doi:10.1017/jfm.2016.151). The pipeline includes functions to initialize particles in a grid formation and advect them through satellite geostrophic velocity fields distributed from CMEMS (https://doi.org/10.48670/moi-00148). We built a custom kernel to calculate the relative vorticity along a Lagrangian particle trajectory, which is necessary for calculating the LAVD.
 
-The LAVD is calculated by integrating the vorticity along a particles trajectory, and subtracting the domain average vorticity. Each particle will then have a single LAVD value assigned to it. By plotting the LAVD at the particle initialization location, RCLVs are easily identifiable as circular local maxima in the LAVD field. The floater package is used to identify closed contours around these local maxima in order to define the boundary of a coherent structure. 
+The LAVD is calculated by integrating the vorticity along a particle trajectory, and subtracting the domain average vorticity. Each particle will then have a single LAVD value assigned to it. By plotting the LAVD at the particle initialization location, RCLVs are identified from closed contours surrounding local maxima in the LAVD field. The floater package is used to identify the appropriate contours in the LAVD field. 
 
-We build on the floater package by iterating through viable convex deficiency parameters, requiring minimal dispersal, and ensuring that the sign of the vorticity is consistent and the beginning and end of the features lifetime. Finally, this code can be used to track RCLVs through time and space by assigning water masses a unique ID. The tracking methodology allows one to create an RCLV atlas that can be easily compared with Eulerian eddy atlases. 
+We build on the floater package by iterating through viable convex deficiency parameters, requiring minimal dispersal, and ensuring that the sign of the vorticity is consistent at the beginning and end of the feature lifetime. Finally, this code can be used to track RCLVs through time and space by assigning water masses a unique ID. The tracking methodology allows one to create an RCLV atlas that can be easily compared with Eulerian eddy atlases. 
 
 ## Core Packages
 
@@ -71,3 +71,13 @@ OPTION 1:
     
 5. Practice using the RCLV tracking tools with the Jupyter notebook `example_usage.ipynb`; `produce_RCLV_atlas.py` can be used
    for producing larger datasets 
+
+## Citation
+
+If you use this software, please cite the following:
+
+Jones-Kellett, A. (2023). RCLVatlas (Version 1.0.0) [Computer software]. https://doi.org/10.5281/zenodo.7702978
+
+Jones-Kellett, AE & Follows, MJ. (2024). A Lagrangian coherent eddy atlas for biogeochemical applications in the North Pacific Subtropical Gyre. Earth Syst. Sci. Data. 16, 1475–1501. https://doi.org/10.5194/essd-16-1475-2024
+
+
